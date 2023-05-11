@@ -18,13 +18,6 @@ class Sockets {
         this.io.on('connection', ( socket ) => {
 
             console.log('Cliente conectado');
-
-            // Escuchar evento: mensaje-to-server
-            // socket.on('mensaje-to-server', ( data ) => {
-            //     console.log( data );
-                
-            //     this.io.emit('mensaje-from-server', data );
-            // });
             
             socket.on('solicitar-ticket', ( data, callback ) => {
                 // console.log('Nuevo ticket backend');
@@ -33,6 +26,14 @@ class Sockets {
                 callback( nuevoTicket );
                 // socket.emit('ticket-asignado', nuevoTicket);
             });
+
+            socket.on('siguiente-ticket-trabajar', ( { agente, escritorio }, callback ) => {
+                // console.log(agente, escritorio);
+                const suTicket = this.ticketList.asignarTicket( agente, escritorio );
+                callback( suTicket );
+
+                this.io.emit('ticket-asignado', this.ticketList.ultimos13);
+            })
         
         });
     }
